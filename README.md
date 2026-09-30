@@ -1,70 +1,76 @@
-# Getting Started with Create React App
+# SortFusion
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Watch **Quick**, **Merge**, **Heap**, **Shell**, **Insertion**, **Selection**, **Bubble** and **Cocktail Shaker** sort compare, swap and merge their way to order. Pause at any step, scrub back and forth through the run, follow along in the pseudocode, or sort your own numbers.
 
-## Available Scripts
-        
-In the project directory, you can run:
+**Live demo:** [sort-fusion-ui.vercel.app](https://sort-fusion-ui.vercel.app)
 
-### `npm start`
-       
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Built with Next.js (App Router), Framer Motion and Tailwind CSS v4.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Getting started
 
-### `npm test`
+```bash
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # production build
+npm run lint
+npm run format   # prettier, using .prettierrc
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+See [INSTALLATION.md](INSTALLATION.md) for requirements, deployment and troubleshooting.
 
-### `npm run build`
+## Features
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **8 algorithms** with best / average / worst complexity, space, stability and in-place badges.
+- **Step-by-step playback**: play, pause, step forward and back, or drag the timeline to any point in the run.
+- **Live pseudocode**: the line that produced the current step is highlighted as it runs.
+- **Plain-English narration** of every step ("Comparing a[3] = 42 with a[7] = 26").
+- **Live metrics**: comparisons, swaps and writes so far, next to what the whole run will take.
+- **Data presets**: random, nearly sorted, reversed, few unique and already sorted. These show each algorithm's best and worst cases.
+- **Your own numbers**: paste up to 200 values, including decimals and negatives.
+- **Optional sound**: each step plays a tone pitched by bar height.
+- Adjustable array size (4–200 bars, capped to what fits on screen) and speed (2 to 2,000 steps per second).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Controls
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+| Action | How |
+| --- | --- |
+| Sort / pause / replay | `Space` or the main button |
+| Step back / forward | `←` / `→` |
+| Back to start | `R` |
+| New array | `S` |
+| Sound on / off | `M` |
+| Jump anywhere | Drag the timeline under the bars |
 
-### `npm run eject`
+### Colour key
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+| Colour | Meaning |
+| --- | --- |
+| Violet → cyan | Unsorted, shaded by height |
+| Amber | Being compared |
+| Rose | Being swapped or written |
+| Fuchsia | Pivot (quick sort) or current minimum (selection sort) |
+| Green | In its final position |
+| Faded | Outside the sub-array being worked on (merge and quick sort) |
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## How it works
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```
+src/components/sorting/
+├── engine/
+│   ├── algorithms.ts   the 8 sorts, each recording its steps into a Recorder
+│   ├── constants.ts    op types, algorithm metadata + pseudocode, presets
+│   ├── arrays.ts       preset generators, custom-input parsing
+│   ├── controller.ts   replay loop, stepping, seeking, speed
+│   └── sound.ts        Web Audio tones
+├── Bars.tsx            the bars, step narration and timeline
+├── ControlBar.tsx      glass toolbar
+├── Panels.tsx          live metrics, algorithm card, legend, custom input
+├── GlassSelect.tsx     accessible dropdown
+└── SortingVisualizer.tsx
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Each algorithm sorts a copy of the array up front, which takes a few milliseconds even for 200 bars. As it runs, it records every compare, swap, write, pivot and "this bar is done" as an op, along with the pseudocode line that produced it. The animation is a replay of those ops, paced by `requestAnimationFrame` against the current speed slider, so changing speed mid-run never restarts it.
 
-## Learn More
+Because the run is a recording, stepping back or scrubbing the timeline replays the ops from the start up to the chosen point. That costs O(steps) and takes a few milliseconds at worst. A test run across 1,800+ arrays checks that every recording ends fully sorted, and that every bar marked green really is in its final place.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Theme tokens and the `sf-*` colours live in `src/app/globals.css` (Tailwind v4 has no `tailwind.config.js`). The design system is shared with [Pathfinding Visualizer](https://github.com/KriXsh/Pathfinding-Visualizer) and [krish.dev](https://krish-portfolio-six.vercel.app).
